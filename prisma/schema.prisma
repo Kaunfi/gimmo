@@ -1,0 +1,91 @@
+// Schéma Prisma GIMMO — MVP V1
+// Hébergé sur Supabase (PostgreSQL)
+// Voir .env.local pour les variables de connexion
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Simulation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ── Étape 1 : Intention projet ──────────────────────────────
+  projectStage  String // 'thinking' | 'identified' | 'owner' | 'restructure'
+  mainGoal      String // 'cashflow' | 'patrimoine' | 'transmission' | 'retraite' | 'impots'
+  locationType  String // 'nue' | 'meublee_ld' | 'meublee_tourisme_classe' | 'meublee_tourisme_nc' | 'saisonniere'
+
+  // ── Étape 2 : Situation personnelle ──────────────────────────
+  familySituation  String // 'single' | 'married' | 'pacsed'
+  childrenCount    Int    @default(0)
+  householdIncome  Float // Revenu net imposable hors immo (€/an)
+  existingRentals  Int    @default(0) // Nombre de biens déjà en location (pour seuil LMP)
+
+  // ── Étape 3 : Le bien ─────────────────────────────────────────
+  propertyPrice    Float  // Prix d'acquisition FAI (€)
+  propertyType     String // 'ancien' | 'neuf' | 'vefa'
+  notaryFees       Float  // Frais de notaire (€)
+  renovationWork   Float  @default(0) // Travaux initiaux (€)
+  furnitureBudget  Float? // Budget mobilier si meublé (€)
+  postalCode       String @default("")
+
+  // ── Étape 4 : Financement ────────────────────────────────────
+  financingMode    String  // 'loan' | 'cash'
+  downPayment      Float   @default(0) // Apport personnel (€)
+  loanAmount       Float   @default(0) // Capital emprunté (€)
+  loanDuration     Int     @default(20) // Durée en années
+  interestRate     Float   @default(0) // Taux nominal hors assurance (%)
+  insuranceRate    Float   @default(0) // Taux assurance (% du capital initial/an)
+
+  // ── Étape 5 : Exploitation ───────────────────────────────────
+  monthlyRent      Float  // Loyer mensuel HC (€)
+  vacancyRate      Float  @default(0.04) // Taux vacance (0-1)
+  condoFees        Float  @default(0) // Charges copro non récupérables (€/an)
+  propertyTax      Float  @default(0) // Taxe foncière (€/an)
+  pnoInsurance     Float  @default(0) // Assurance PNO (€/an)
+  managementFees   Float  @default(0) // Frais de gestion (€/an)
+  maintenancePct   Float  @default(0.05) // Provision travaux (% loyer brut)
+  holdingPeriod    Int    @default(20) // Horizon de détention (années)
+
+  // ── Résultats (JSON pour flexibilité) ────────────────────────
+  results           Json? // Array de RegimeResult
+  recommendedRegime String? // Clé du régime recommandé
+  isLmpTriggered    Boolean @default(false) // Bascule LMP détectée
+
+  // ── Lead ──────────────────────────────────────────────────────
+  email           String?
+  phone           String?
+  rgpdConsent     Boolean @default(false)
+  newsletterOptIn Boolean @default(false)
+
+  // ── Tracking ─────────────────────────────────────────────────
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  completedAt DateTime? // Quand l'email a été soumis
+
+  lead   Lead?   @relation("LeadSimulations", fields: [email], references: [email])
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email           String  @unique
+  phone           String?
+  rgpdConsent     Boolean
+  newsletterOptIn Boolean @default(false)
+
+  simulations Simulation[] @relation("LeadSimulations")
+
+  @@index([email])
+}

@@ -1,26 +1,156 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
+/* ── Design Tokens GIMMO ──────────────────────────────────────────────────── */
+/* Source : maquette Claude Design — ne pas modifier sans valider avec la maquette */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  /* Couleurs GIMMO */
+  --color-gimmo-primary: #1e3a6e; /* Bleu profond — confiance */
+  --color-gimmo-primary-hover: #162d57;
+  --color-gimmo-primary-50: #eef2ff;
+  --color-gimmo-primary-100: #dbeafe;
+  --color-gimmo-secondary: #0b7a56; /* Vert émeraude — gains */
+  --color-gimmo-secondary-50: #ecfdf5;
+  --color-gimmo-accent: #d97b34; /* Ambre — alertes */
+  --color-gimmo-accent-50: #fff7ed;
+  --color-gimmo-bg: #f8f7f4; /* Fond crème */
+  --color-gimmo-surface: #ffffff;
+  --color-gimmo-border: #e4e2dc;
+  --color-gimmo-text: #1a1f2e;
+  --color-gimmo-muted: #6b7280;
+  --color-gimmo-error: #dc2626;
+  --color-gimmo-success: #059669;
+
+  /* Couleurs comparateur régimes */
+  --color-regime-micro-foncier: #94a3b8;
+  --color-regime-reel-foncier: #60a5fa;
+  --color-regime-micro-bic: #a78bfa;
+  --color-regime-reel-lmnp: #1e3a6e;
+  --color-regime-sci-ir: #34d399;
+  --color-regime-sci-is: #f59e0b;
+  --color-regime-lmp: #f97316;
+
+  /* Shadcn tokens remappés sur GIMMO */
+  --color-background: var(--color-gimmo-bg);
+  --color-foreground: var(--color-gimmo-text);
+  --color-card: var(--color-gimmo-surface);
+  --color-card-foreground: var(--color-gimmo-text);
+  --color-popover: var(--color-gimmo-surface);
+  --color-popover-foreground: var(--color-gimmo-text);
+  --color-primary: var(--color-gimmo-primary);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-gimmo-primary-50);
+  --color-secondary-foreground: var(--color-gimmo-primary);
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: var(--color-gimmo-muted);
+  --color-accent: var(--color-gimmo-accent-50);
+  --color-accent-foreground: var(--color-gimmo-accent);
+  --color-destructive: var(--color-gimmo-error);
+  --color-border: var(--color-gimmo-border);
+  --color-input: var(--color-gimmo-border);
+  --color-ring: var(--color-gimmo-primary);
+
+  /* Chart colors pour Recharts */
+  --color-chart-1: var(--color-regime-reel-lmnp);
+  --color-chart-2: var(--color-regime-sci-is);
+  --color-chart-3: var(--color-regime-reel-foncier);
+  --color-chart-4: var(--color-regime-sci-ir);
+  --color-chart-5: var(--color-regime-micro-bic);
+
+  --radius: 0.75rem;
+
+  --font-sans: var(--font-dm-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-dm-sans);
+
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Base styles ──────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus visible accessible */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    @apply outline-primary outline-2 outline-offset-2;
+  }
+
+  /* Scrollbar discrète */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Animations du simulateur ─────────────────────────────────────────────── */
+@layer utilities {
+  .slide-in-right {
+    animation: slideInRight 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  .fade-in-up {
+    animation: fadeInUp 0.22s ease both;
+  }
+  .fade-in {
+    animation: fadeIn 0.2s ease both;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

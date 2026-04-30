@@ -12,12 +12,20 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    rules: {
+      // Désactivé car on utilise des textes français avec apostrophes naturelles
+      // Les entités HTML (&apos; etc.) dégradent la lisibilité du code
+      "react/no-unescaped-entities": "off",
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "scripts/**",
     ],
   },
 ];
