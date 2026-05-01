@@ -1,0 +1,11 @@
+# Fins de ligne : LF partout sauf fichiers Windows natifs
+* text=auto eol=lf
+
+# Husky hooks — toujours LF (exécutés par sh/bash)
+.husky/* text eol=lf
+
+# Fichiers binaires — pas de conversion
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

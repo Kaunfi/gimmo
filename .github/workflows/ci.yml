@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint · Types · Tests · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Node + cache npm ──────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── Install ───────────────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Prisma generate (nécessaire avant build + typecheck) ──────────────────
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # ── Lint ──────────────────────────────────────────────────────────────────
+      - name: ESLint
+        run: npm run lint
+
+      # ── TypeScript ────────────────────────────────────────────────────────────
+      - name: Type check
+        run: npx tsc --noEmit
+
+      # ── Tests ─────────────────────────────────────────────────────────────────
+      - name: Unit tests
+        run: npm test
+
+      # ── Build Next.js ─────────────────────────────────────────────────────────
+      - name: Build
+        run: npm run build
+        env:
+          # Valeurs factices pour que le build réussisse sans DB réelle
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/gimmo_ci
+          DIRECT_URL: postgresql://ci:ci@localhost:5432/gimmo_ci
+          NEXT_PUBLIC_APP_URL: https://gimmo.fr
+          RESEND_API_KEY: re_ci_placeholder
+          NEXT_PUBLIC_POSTHOG_KEY: phc_ci_placeholder

@@ -15,61 +15,60 @@ model Simulation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // ── Étape 1 : Intention projet ──────────────────────────────
-  projectStage  String // 'thinking' | 'identified' | 'owner' | 'restructure'
-  mainGoal      String // 'cashflow' | 'patrimoine' | 'transmission' | 'retraite' | 'impots'
-  locationType  String // 'nue' | 'meublee_ld' | 'meublee_tourisme_classe' | 'meublee_tourisme_nc' | 'saisonniere'
+  // ── Étape 1 : Intention projet ──────────────────────────────────────────────
+  projectStage String? // 'thinking' | 'identified' | 'owner' | 'restructure'
+  mainGoal     String? // 'cashflow' | 'patrimoine' | 'transmission' | 'retraite' | 'impots'
+  locationType String  // 'nue' | 'meublee_ld' | 'meublee_tourisme_classe' | 'meublee_tourisme_nc' | 'saisonniere'
 
-  // ── Étape 2 : Situation personnelle ──────────────────────────
-  familySituation  String // 'single' | 'married' | 'pacsed'
-  childrenCount    Int    @default(0)
-  householdIncome  Float // Revenu net imposable hors immo (€/an)
-  existingRentals  Int    @default(0) // Nombre de biens déjà en location (pour seuil LMP)
+  // ── Étape 2 : Situation personnelle ────────────────────────────────────────
+  familySituation        String // 'celibataire' | 'couple'
+  childrenCount          Int    @default(0)
+  householdIncome        Float  // Revenu net imposable hors immo (€/an)
+  existingMeubleRevenues Float  @default(0) // Recettes meublées autres biens (€/an) — seuil LMP
 
-  // ── Étape 3 : Le bien ─────────────────────────────────────────
-  propertyPrice    Float  // Prix d'acquisition FAI (€)
-  propertyType     String // 'ancien' | 'neuf' | 'vefa'
-  notaryFees       Float  // Frais de notaire (€)
-  renovationWork   Float  @default(0) // Travaux initiaux (€)
-  furnitureBudget  Float? // Budget mobilier si meublé (€)
-  postalCode       String @default("")
+  // ── Étape 3 : Le bien ──────────────────────────────────────────────────────
+  purchasePrice   Float  // Prix d'acquisition FAI (€)
+  propertyType    String // 'ancien' | 'neuf' | 'vefa'
+  notaryFees      Float
+  renovationWork  Float  @default(0)
+  furnitureBudget Float? // Uniquement si meublé
+  postalCode      String @default("")
 
-  // ── Étape 4 : Financement ────────────────────────────────────
-  financingMode    String  // 'loan' | 'cash'
-  downPayment      Float   @default(0) // Apport personnel (€)
-  loanAmount       Float   @default(0) // Capital emprunté (€)
-  loanDuration     Int     @default(20) // Durée en années
-  interestRate     Float   @default(0) // Taux nominal hors assurance (%)
-  insuranceRate    Float   @default(0) // Taux assurance (% du capital initial/an)
+  // ── Étape 4 : Financement ──────────────────────────────────────────────────
+  financingMode String // 'loan' | 'cash'
+  downPayment   Float  @default(0)
+  loanAmount    Float  @default(0)
+  loanDuration  Int    @default(20)
+  interestRate  Float  @default(0)
+  insuranceRate Float  @default(0)
 
-  // ── Étape 5 : Exploitation ───────────────────────────────────
-  monthlyRent      Float  // Loyer mensuel HC (€)
-  vacancyRate      Float  @default(0.04) // Taux vacance (0-1)
-  condoFees        Float  @default(0) // Charges copro non récupérables (€/an)
-  propertyTax      Float  @default(0) // Taxe foncière (€/an)
-  pnoInsurance     Float  @default(0) // Assurance PNO (€/an)
-  managementFees   Float  @default(0) // Frais de gestion (€/an)
-  maintenancePct   Float  @default(0.05) // Provision travaux (% loyer brut)
-  holdingPeriod    Int    @default(20) // Horizon de détention (années)
+  // ── Étape 5 : Exploitation ─────────────────────────────────────────────────
+  monthlyRent    Float
+  vacancyRate    Float @default(0.04)
+  condoFees      Float @default(0)
+  propertyTax    Float @default(0)
+  pnoInsurance   Float @default(0)
+  managementFees Float @default(0)
+  maintenancePct Float @default(0.05)
+  holdingPeriod  Int   @default(20)
 
-  // ── Résultats (JSON pour flexibilité) ────────────────────────
-  results           Json? // Array de RegimeResult
+  // ── Résultats (JSON pour flexibilité) ──────────────────────────────────────
+  results           Json?   // Array de RegimeResult (summary)
   recommendedRegime String? // Clé du régime recommandé
-  isLmpTriggered    Boolean @default(false) // Bascule LMP détectée
+  isLmpTriggered    Boolean @default(false)
 
-  // ── Lead ──────────────────────────────────────────────────────
+  // ── Lead ───────────────────────────────────────────────────────────────────
   email           String?
-  phone           String?
-  rgpdConsent     Boolean @default(false)
-  newsletterOptIn Boolean @default(false)
+  gdprConsent     Boolean   @default(false)
+  newsletterOptIn Boolean   @default(false)
+  completedAt     DateTime? // Quand l'email a été soumis
 
-  // ── Tracking ─────────────────────────────────────────────────
+  // ── Tracking UTM ───────────────────────────────────────────────────────────
   utmSource   String?
   utmMedium   String?
   utmCampaign String?
-  completedAt DateTime? // Quand l'email a été soumis
 
-  lead   Lead?   @relation("LeadSimulations", fields: [email], references: [email])
+  lead Lead? @relation("LeadSimulations", fields: [email], references: [email])
 
   @@index([email])
   @@index([createdAt])
@@ -81,9 +80,9 @@ model Lead {
   updatedAt DateTime @updatedAt
 
   email           String  @unique
-  phone           String?
-  rgpdConsent     Boolean
+  gdprConsent     Boolean
   newsletterOptIn Boolean @default(false)
+  simulationCount Int     @default(0)
 
   simulations Simulation[] @relation("LeadSimulations")
 

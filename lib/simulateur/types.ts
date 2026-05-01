@@ -13,7 +13,7 @@ export type LocationType =
 
 // ── Étape 2 ──────────────────────────────────────────────────────────────────
 
-export type FamilySituation = 'single' | 'married' | 'pacsed'
+export type FamilySituation = 'celibataire' | 'couple'
 
 // ── Étape 3 ──────────────────────────────────────────────────────────────────
 
@@ -39,7 +39,8 @@ export interface SimulateurState {
   familySituation: FamilySituation
   childrenCount: number
   householdIncome: number // €/an — revenu net imposable hors immo
-  existingRentals: number // 0 | 1 | 2 | 3+ — biens déjà en location (pour seuil LMP)
+  /** Recettes meublées annuelles des autres biens du foyer (€/an) — pour seuil LMP 23 000 € */
+  existingMeubleRevenues: number
 
   // Étape 3 — Le bien
   purchasePrice: number
@@ -83,10 +84,10 @@ export const SIMULATEUR_INITIAL_STATE: SimulateurState = {
   locationType: null,
   isTourismeClasse: null,
 
-  familySituation: 'single',
+  familySituation: 'celibataire',
   childrenCount: 0,
   householdIncome: 60000,
-  existingRentals: 0,
+  existingMeubleRevenues: 0,
 
   purchasePrice: 200000,
   propertyType: 'ancien',

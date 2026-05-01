@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Sans } from 'next/font/google'
+import { Suspense } from 'react'
+import { PostHogProvider } from '@/components/analytics/PostHogProvider'
 import './globals.css'
 
 // Police DM Sans — identique à la maquette GIMMO
@@ -10,7 +12,10 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://gimmo.fr'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: {
     default: 'GIMMO — Simulateur fiscal immobilier 2026',
     template: '%s | GIMMO',
@@ -31,12 +36,34 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
+    url: APP_URL,
     siteName: 'GIMMO',
     title: 'GIMMO — Simulateur fiscal immobilier 2026',
     description:
       'Trouvez le régime fiscal optimal pour votre bien locatif. Simulation gratuite, résultats en 5 minutes.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GIMMO — Simulateur fiscal immobilier',
+      },
+    ],
   },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GIMMO — Simulateur fiscal immobilier 2026',
+    description: 'Trouvez le régime fiscal optimal pour votre bien locatif.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-snippet': -1 },
+  },
+  alternates: {
+    canonical: APP_URL,
+  },
 }
 
 export const viewport: Viewport = {
@@ -52,7 +79,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={dmSans.variable}>
-      <body className="min-h-screen bg-[#F8F7F4] font-sans antialiased">{children}</body>
+      <body className="min-h-screen bg-[#F8F7F4] font-sans antialiased">
+        {/* Suspense requis par useSearchParams dans PostHogProvider */}
+        <Suspense fallback={null}>
+          <PostHogProvider>{children}</PostHogProvider>
+        </Suspense>
+      </body>
     </html>
   )
 }
