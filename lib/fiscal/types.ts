@@ -169,7 +169,7 @@ export interface RegimeResult {
   netSaleProceeds: number // Net après remboursement crédit + PV
 
   // ── Retour total ────────────────────────────────────────────────────────────
-  totalReturn: number // Cumul cashflows + produit net de la vente
+  totalReturn: number // Profit net = Σcashflows + produit net de la vente − apport initial (dp + mobilier − emprunt)
 }
 
 /** Résultat de compareAllRegimes */

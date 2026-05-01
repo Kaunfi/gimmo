@@ -193,7 +193,17 @@ export function calcReelBicLmnp(inputs: SimulationInputs): RegimeResult {
       : 0
 
   const netSaleProceeds = round2(salePrice - plusValue.totalTaxOnGain - remainingDebt)
-  const totalReturn = round2(totalCfAccum + netSaleProceeds)
+
+  // Retour net = flux cumulés + produit net de la vente − mise de fonds initiale
+  // (apport = prix + frais + travaux + mobilier − emprunt)
+  const initialCashInvested = round2(
+    inputs.purchasePrice +
+      inputs.notaryFees +
+      inputs.renovationWork +
+      inputs.furnitureBudget -
+      inputs.loanAmount
+  )
+  const totalReturn = round2(totalCfAccum + netSaleProceeds - initialCashInvested)
 
   const effectiveTaxRate = y1.annualRentNet > 0 ? round2(y1.totalTax / y1.annualRentNet) : 0
 

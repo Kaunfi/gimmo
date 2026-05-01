@@ -324,11 +324,20 @@ describe('compareAllRegimes()', () => {
     expect(eligibleIds).toContain(result.recommendedRegime!)
   })
 
-  it('totalReturn cohérent (cashflows + PV)', () => {
+  it('totalReturn cohérent (cashflows + revente − apport)', () => {
     const result = compareAllRegimes(baseInputsNue)
+    const initialCash =
+      baseInputsNue.purchasePrice +
+      baseInputsNue.notaryFees +
+      baseInputsNue.renovationWork +
+      baseInputsNue.furnitureBudget -
+      baseInputsNue.loanAmount
     result.eligibleRegimes.forEach((r) => {
-      // totalReturn = cashflows cumulés + produit net vente
-      expect(r.totalReturn).toBeCloseTo(r.totalCashflowOverHolding + r.netSaleProceeds, 0)
+      // totalReturn = cashflows cumulés + produit net vente − mise de fonds initiale (apport)
+      expect(r.totalReturn).toBeCloseTo(
+        r.totalCashflowOverHolding + r.netSaleProceeds - initialCash,
+        0
+      )
     })
   })
 })

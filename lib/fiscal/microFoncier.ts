@@ -161,7 +161,16 @@ export function calcMicroFoncier(inputs: SimulationInputs): RegimeResult {
       : 0
 
   const netSaleProceeds = round2(salePrice - plusValue.totalTaxOnGain - remainingDebt)
-  const totalReturn = round2(totalCfAccum + netSaleProceeds)
+
+  // Retour net = flux cumulés + produit net de la vente − mise de fonds initiale
+  const initialCashInvested = round2(
+    inputs.purchasePrice +
+      inputs.notaryFees +
+      inputs.renovationWork +
+      inputs.furnitureBudget -
+      inputs.loanAmount
+  )
+  const totalReturn = round2(totalCfAccum + netSaleProceeds - initialCashInvested)
 
   const effectiveTaxRate = rentNet > 0 ? round2(totalTax / rentNet) : 0
 

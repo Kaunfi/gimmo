@@ -190,7 +190,15 @@ export function calcSciIs(inputs: SimulationInputs): RegimeResult {
   const pfuCession = round2(pvNetApresIs * PFU.total)
   const netSaleProceeds = round2(salePrice - plusValue.totalTaxOnGain - pfuCession - remainingDebt)
 
-  const totalReturn = round2(totalCfAccum + netSaleProceeds)
+  // Retour net = flux cumulés + produit net de la vente − mise de fonds initiale
+  const initialCashInvested = round2(
+    inputs.purchasePrice +
+      inputs.notaryFees +
+      inputs.renovationWork +
+      inputs.furnitureBudget -
+      inputs.loanAmount
+  )
+  const totalReturn = round2(totalCfAccum + netSaleProceeds - initialCashInvested)
   const effectiveTaxRate = y1.annualRentNet > 0 ? round2(y1.totalTax / y1.annualRentNet) : 0
 
   return {

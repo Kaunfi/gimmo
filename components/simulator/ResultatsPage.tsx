@@ -239,9 +239,34 @@ function RegimeCard({
 
           {/* Retour total */}
           <div className="mt-5 rounded-xl bg-white px-4 py-3 shadow-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-[#6B7280]">Retour total (cashflows + PV nette)</span>
-              <span className="text-lg font-bold text-[#1A1F2E]">{fmtEur(regime.totalReturn)}</span>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm text-[#6B7280]">
+                Profit net sur la durée
+                <span className="ml-1 text-xs text-[#9CA3AF]">(cashflows + revente − apport)</span>
+              </span>
+              <span
+                className={`text-lg font-bold ${regime.totalReturn >= 0 ? 'text-[#0B7A56]' : 'text-red-600'}`}
+              >
+                {regime.totalReturn >= 0 ? '+' : ''}
+                {fmtEur(regime.totalReturn)}
+              </span>
+            </div>
+            <div className="space-y-1 border-t border-dashed border-[#E4E2DC] pt-2 text-xs text-[#9CA3AF]">
+              <div className="flex justify-between">
+                <span>Σ cashflows ({regime.projection.length} ans)</span>
+                <span
+                  className={
+                    regime.totalCashflowOverHolding >= 0 ? 'text-[#0B7A56]' : 'text-red-400'
+                  }
+                >
+                  {regime.totalCashflowOverHolding >= 0 ? '+' : ''}
+                  {fmtEur(regime.totalCashflowOverHolding)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>PV nette estimée</span>
+                <span className="text-[#0B7A56]">+{fmtEur(regime.plusValue.netGain)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -432,7 +457,11 @@ export function ResultatsPage() {
               highlight={recommended.monthlyCashflow >= 0}
             />
             <Kpi label="Impôt annuel" value={fmtEur(recommended.totalTax)} />
-            <Kpi label="Retour total" value={fmtEur(recommended.totalReturn)} highlight />
+            <Kpi
+              label="Profit net"
+              value={`${recommended.totalReturn >= 0 ? '+' : ''}${fmtEur(recommended.totalReturn)}`}
+              highlight
+            />
           </div>
         </div>
       )}
