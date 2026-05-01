@@ -6,7 +6,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db/prisma'
-import { resend, FROM_EMAIL } from '@/lib/resend/client'
+import { getResend, FROM_EMAIL } from '@/lib/resend/client'
 import { buildSimulationEmail, type RegimeSummary } from '@/lib/resend/templates'
 
 // ── Schéma de validation ──────────────────────────────────────────────────────
@@ -185,7 +185,7 @@ export async function POST(req: Request) {
           appUrl,
         })
 
-        const { error } = await resend.emails.send({
+        const { error } = await getResend().emails.send({
           from: FROM_EMAIL,
           to: [d.email],
           subject: emailData.subject,
