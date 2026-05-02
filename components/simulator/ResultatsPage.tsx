@@ -264,8 +264,12 @@ function RegimeCard({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>PV nette estimée</span>
-                <span className="text-[#0B7A56]">+{fmtEur(regime.plusValue.netGain)}</span>
+                <span>Produit net de revente</span>
+                <span className="text-[#0B7A56]">+{fmtEur(regime.netSaleProceeds)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Apport initial</span>
+                <span className="text-red-400">−{fmtEur(regime.initialCashInvested)}</span>
               </div>
             </div>
           </div>

@@ -267,6 +267,7 @@ export function calcLmp(inputs: SimulationInputs): RegimeResult {
 
     plusValue,
     netSaleProceeds,
+    initialCashInvested,
     totalReturn,
   }
 }
@@ -305,6 +306,7 @@ function buildIneligibleResult(inputs: SimulationInputs, reason: string): Regime
     totalCashflowOverHolding: 0,
     plusValue: zeroPV,
     netSaleProceeds: inputs.purchasePrice,
+    initialCashInvested: 0,
     totalReturn: 0,
   }
 }

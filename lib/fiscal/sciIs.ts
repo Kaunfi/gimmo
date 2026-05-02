@@ -235,6 +235,7 @@ export function calcSciIs(inputs: SimulationInputs): RegimeResult {
 
     plusValue,
     netSaleProceeds,
+    initialCashInvested,
     totalReturn,
   }
 }

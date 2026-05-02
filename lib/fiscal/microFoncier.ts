@@ -209,6 +209,7 @@ export function calcMicroFoncier(inputs: SimulationInputs): RegimeResult {
 
     plusValue,
     netSaleProceeds,
+    initialCashInvested,
     totalReturn,
   }
 }
@@ -253,6 +254,7 @@ function buildIneligibleResult(
     totalCashflowOverHolding: 0,
     plusValue: zeroPV,
     netSaleProceeds: inputs.purchasePrice,
+    initialCashInvested: 0,
     totalReturn: 0,
   }
 }
