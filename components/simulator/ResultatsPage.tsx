@@ -268,7 +268,7 @@ function RegimeCard({
                 <span className="text-[#0B7A56]">+{fmtEur(regime.netSaleProceeds)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Apport initial</span>
+                <span>Apport + mobilier initial</span>
                 <span className="text-red-400">−{fmtEur(regime.initialCashInvested)}</span>
               </div>
             </div>
@@ -502,7 +502,18 @@ export function ResultatsPage() {
               formatter={(value) => [fmtEur(typeof value === 'number' ? value : 0), 'Impôt an 1']}
               contentStyle={{ borderRadius: '10px', border: '1px solid #E4E2DC', fontSize: 13 }}
             />
-            <Bar dataKey="impot" radius={[0, 6, 6, 0]} fill="#1E3A6E" maxBarSize={28} />
+            <Bar
+              dataKey="impot"
+              radius={[0, 6, 6, 0]}
+              fill="#1E3A6E"
+              maxBarSize={28}
+              minPointSize={3}
+              label={{
+                position: 'right',
+                formatter: (v: unknown) => (v === 0 ? '0 €' : ''),
+                style: { fontSize: 11, fill: '#9CA3AF' },
+              }}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
