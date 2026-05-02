@@ -263,9 +263,14 @@ function RegimeCard({
                   {fmtEur(regime.totalCashflowOverHolding)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span>Produit net de revente</span>
-                <span className="text-[#0B7A56]">+{fmtEur(regime.netSaleProceeds)}</span>
+              <div className="flex justify-between gap-2">
+                <span>
+                  Produit net de revente
+                  <span className="ml-1 opacity-60">
+                    (dont PV nette {fmtEur(regime.plusValue.netGain)})
+                  </span>
+                </span>
+                <span className="shrink-0 text-[#0B7A56]">+{fmtEur(regime.netSaleProceeds)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Apport + mobilier initial</span>
